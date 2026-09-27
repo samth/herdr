@@ -64,7 +64,11 @@ STAGED_PUBLISHED_MANIFESTS = {
     ),
 }
 
-UNPUBLISHED_BUNDLED_MANIFESTS: dict[str, tuple[str, str]] = {}
+# Stable clients cannot identify these agents yet. Publish each manifest and
+# remove its entry before the first stable release that bundles it.
+UNPUBLISHED_BUNDLED_MANIFESTS: dict[str, tuple[str, str]] = {
+    "warp": ("2026.09.26.1", "ff102b02f282856825ecae316add6e1ca3427d9e1ba11223314e70b38362343e"),
+}
 
 
 def parse_args() -> argparse.Namespace:

@@ -1417,6 +1417,17 @@
             "on",
             "off"
           ]
+        },
+        {
+          "key": "ui.sound.agents.warp",
+          "type": "enum",
+          "default": "\"default\"",
+          "description": "Sound override for detected Warp agents.",
+          "values": [
+            "default",
+            "on",
+            "off"
+          ]
         }
       ]
     },

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added Warp agent CLI detection for idle, working, and approval states.
+
 ## [0.9.1] - 2026-09-16
 
 ### Added

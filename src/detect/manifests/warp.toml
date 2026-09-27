@@ -1,0 +1,61 @@
+id = "warp"
+version = "2026.09.26.1"
+min_engine_version = 1
+updated_at = "2026-09-26T00:00:00Z"
+
+# Evidence: live detection-source captures from the Warp agent CLI
+# (warp-tui-stable v0.2026.09.16.08.27.stable_02) in Herdr on Linux, at pane
+# widths of 50 and 118 columns.
+#
+# Idle draws a bordered input box ("> Ask the agent anything • ? for
+# shortcuts ...") above a one-line status bar that starts with "▶▶ |" and
+# names the model and cwd. A finished turn leaves a frozen "∷ 10s" duration
+# line above the box. Shell mode ("!") swaps the status bar for
+# "Shell mode <cwd>", or for "Ctrl + Shift + ⏎  to use agent" once a command is
+# typed.
+#
+# An active turn inserts "⋰ Warping... (3s)" directly above the input box,
+# with a rotating ⋰/⋯/⋮/⋱ glyph and, on wide panes, "▶▶ Auto approve off  Ctrl
+# + C to stop" on the same row. The line stays up while the agent runs or
+# monitors a shell command ("Agent is monitoring command", "Agent waiting for
+# instructions").
+#
+# Command and file-edit approvals replace the input box and status bar with
+# "Is it OK if I run this command and read the output?" or "Is it OK if I make
+# these file edits?", the choices "(1) yes", "(2) no", "(3) Other", and the
+# footer "Esc to cancel  Enter to run". The choices and footer are usually the
+# last non-empty rows, but when the agent has just run a command, that
+# command's shell prompt line can render below the footer, so the blocked rule
+# reads a few extra rows. The idle input box and status bar alone fill the
+# bottom six rows, so transcript text cannot supply all three blocked strings.
+# Warp sets no OSC title or OSC 9;4 progress.
+
+[[rules]]
+id = "approval_prompt"
+state = "blocked"
+priority = 980
+region = "bottom_non_empty_lines(8)"
+visible_blocker = true
+contains = ["(1) yes", "(2) no", "esc to cancel"]
+
+[[rules]]
+id = "warping_working"
+state = "working"
+priority = 900
+# The spinner row sits above the five-row input box and the status bar; a
+# multi-line draft grows the box, so allow a few extra rows.
+region = "bottom_non_empty_lines(12)"
+visible_working = true
+line_regex = ['^\s*\S\s+Warping\.\.\. \(']
+
+[[rules]]
+id = "status_bar_idle"
+state = "idle"
+priority = 850
+region = "bottom_non_empty_lines(1)"
+visible_idle = true
+any = [
+  { line_regex = ['^\s*▶▶ \| '] },
+  { line_regex = ['^\s*Shell mode '] },
+  { contains = ["ctrl + shift + ⏎", "to use agent"] },
+]
